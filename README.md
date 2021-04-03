@@ -10,11 +10,11 @@ Abaixo estão os requisitos desta API, o time terá total liberdade para tomar a
 
 ### Tecnologia
 
-- Utilizar a tecnologia base da aceleração para o desenvolvimento (Exemplo: Java, Node.js).
+- Utilizar a tecnologia base da aceleração para o desenvolvimento (Exemplo: Java, Node.js)
 
 ### Premissas
 
-- A API deve ser pensada para atender diretamente um front-end
+- A  API deve ser pensada para atender diretamente um front-end
 - Deve ser capaz de gravar os logs de erro em um banco de dados relacional
 - O acesso a ela deve ser permitido apenas por requisições que utilizem um token de acesso válido
 
