@@ -17,9 +17,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @EnableAuthorizationServer
 @EnableResourceServer
 @EnableWebSecurity
+@AllArgsConstructor
 public class WebConfigSecutiry extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private UserDetailsService userDetailsService;
 
     @Override
@@ -35,7 +35,7 @@ public class WebConfigSecutiry extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers();
+        web.ignoring().antMatchers("/");
     }
 
     @Bean
