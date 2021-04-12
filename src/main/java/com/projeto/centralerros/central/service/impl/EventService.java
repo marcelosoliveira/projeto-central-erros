@@ -25,6 +25,14 @@ public class EventService implements EventServiceInterface {
         event.setLog(log);
         event.setOrigin(origin);
 
+        if (this.eventRepository.findByLog(log).isPresent()) {
+            this.eventRepository.findByLog(log).stream().forEach(event1 -> {
+                this.eventRepository.updateByQuantity(log, event1.getQuantity() + 1);
+            });
+
+            return this.eventRepository.findByLevel(level);
+        }
+
         this.eventRepository.save(event);
 
         return this.eventRepository.findByLevelAndDescriptionAndLogAndOrigin(
