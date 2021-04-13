@@ -1,4 +1,4 @@
-package com.projeto.centralerros.central.model;
+package com.projeto.centralerros.event.model;
 
 import com.projeto.centralerros.enums.EventLevel;
 import com.projeto.centralerros.user.model.User;
@@ -8,10 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-
-import static java.time.LocalDate.now;
 
 @Entity
 @EntityListeners(EntityListeners.class)
@@ -48,11 +46,10 @@ public class Event {
     @Setter
     private String origin;
 
-    @NotNull
     @Column
     @Getter
     @Setter
-    private LocalDate eventDate = now();
+    private LocalDateTime eventDate = LocalDateTime.now();
 
     @NotNull
     @Column

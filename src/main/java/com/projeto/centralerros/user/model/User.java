@@ -1,7 +1,6 @@
 package com.projeto.centralerros.user.model;
 
-import com.projeto.centralerros.central.model.Event;
-import lombok.AllArgsConstructor;
+import com.projeto.centralerros.event.model.Event;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
