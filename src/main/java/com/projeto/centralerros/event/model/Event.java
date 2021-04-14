@@ -8,7 +8,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -49,7 +51,7 @@ public class Event {
     @Column
     @Getter
     @Setter
-    private LocalDateTime eventDate = LocalDateTime.now();
+    private String eventDate = generateDate();
 
     @NotNull
     @Column
@@ -63,4 +65,12 @@ public class Event {
             joinColumns = @JoinColumn(name = "idEvent"),
             inverseJoinColumns = @JoinColumn(name = "idUser"))
     private List<User> users;
+
+    private String generateDate() {
+        Date dataAtual = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String dataFormatada = dateFormat.format(dataAtual);
+
+        return dataFormatada;
+    }
 }
