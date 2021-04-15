@@ -1,5 +1,6 @@
 package com.projeto.centralerros.event.controller;
 
+import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.event.repository.EventRepository;
 import com.projeto.centralerros.event.service.impl.EventService;
@@ -24,6 +25,11 @@ public class EventController {
         return this.eventRepository.findAll(pageable);
     }
 
+    @GetMapping("errors/{id}")
+    public Optional<String> findById(@PathVariable(value = "id") Long id) {
+        return this.eventRepository.findByIdLog(id);
+    }
+
     @PostMapping("/central")
     public Optional<Event> captureError(@RequestParam(value = "level") EventLevel level,
                                         @RequestParam(value = "description") String description,
@@ -35,14 +41,14 @@ public class EventController {
 
     @GetMapping("/central")
     public Page<Event> findByErrors(@RequestParam(value = "level", required = false) EventLevel level,
-                                    @RequestParam(value = "description", required = false) String description,
-                                    @RequestParam(value = "log", required = false) String log,
-                                    @RequestParam(value = "origin", required = false) String origin,
-                                    @RequestParam(value = "eventDate", required = false) String eventDate,
-                                    @RequestParam(value = "quantity", required = false) Integer quantity,
-                                Pageable pageable) {
+                                       @RequestParam(value = "description", required = false) String description,
+                                       @RequestParam(value = "log", required = false) String log,
+                                       @RequestParam(value = "origin", required = false) String origin,
+                                       @RequestParam(value = "eventDate", required = false) String eventDate,
+                                       @RequestParam(value = "quantity", required = false) Integer quantity,
+                                       Pageable pageable) {
        return this.eventService.findAllParams(
-               level, log, description, origin, eventDate, quantity, pageable);
+               level, description, log, origin, eventDate, quantity, pageable);
     }
 
 }

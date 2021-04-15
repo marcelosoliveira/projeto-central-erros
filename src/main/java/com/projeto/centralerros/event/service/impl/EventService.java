@@ -1,5 +1,6 @@
 package com.projeto.centralerros.event.service.impl;
 
+import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.event.repository.EventRepository;
 import com.projeto.centralerros.event.service.interfaces.EventServiceInterface;
@@ -27,15 +28,21 @@ public class EventService implements EventServiceInterface {
         event.setLog(log);
         event.setOrigin(origin);
 
-        if (this.eventRepository.findByLog(log).isPresent()) {
-            this.eventRepository.findByLog(log).stream().forEach(event1 -> {
-                this.eventRepository.updateByQuantity(log, event1.getQuantity() + 1);
+        Optional<Event> eventFound = this.eventRepository.findByLevelAndLogAndDescription(
+                level, log, description);
+
+        if (eventFound.isPresent()) {
+            eventFound.stream().forEach(event1 -> {
+                this.eventRepository.updateByQuantity(
+                    log, event1.getQuantity() + 1);
             });
+
+            return eventFound;
         }
 
         this.eventRepository.save(event);
 
-        return this.eventRepository.findByLog(log);
+        return eventFound;
     }
 
     @Override
@@ -44,10 +51,10 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Page<Event> findAllParams(EventLevel level, String log, String description,
-                                     String origin, String eventDate, Integer quantity, Pageable pageable){
-        return this.eventRepository.findByLevelOrLogOrDescriptionOrOriginOrEventDateOrQuantity(
-                level, log, description, origin, eventDate, quantity, pageable);
+    public Page<Event> findAllParams(EventLevel level, String description, String log,
+                                        String origin, String eventDate, Integer quantity, Pageable pageable){
+        return this.eventRepository.findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
+                level, description, log, origin, eventDate, quantity, pageable);
     }
 
 }

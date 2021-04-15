@@ -1,5 +1,6 @@
 package com.projeto.centralerros.event.service.interfaces;
 
+import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.enums.EventLevel;
 import org.springframework.data.domain.Example;
@@ -14,8 +15,8 @@ public interface EventServiceInterface {
 
     Optional<Event> createUpdateLevel(@NotNull EventLevel level, String description, String log, String origin);
 
-    Page<Event> findAllParams(EventLevel level, String log, String description,
-                              String origin, String eventDate, Integer quantity, Pageable pageable);
+    Page<Event> findAllParams(EventLevel level, String description, String log,
+                                 String origin, String eventDate, Integer quantity, Pageable pageable);
 
     List<Event> findAll(Example<Event> events, Pageable pageable);
 
