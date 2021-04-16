@@ -51,7 +51,7 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Page<Event> findAllParams(EventLevel level, String description, String log,
+    public Page<EventDTO> findAllParams(EventLevel level, String description, String log,
                                         String origin, String eventDate, Integer quantity, Pageable pageable){
         return this.eventRepository.findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
                 level, description, log, origin, eventDate, quantity, pageable);

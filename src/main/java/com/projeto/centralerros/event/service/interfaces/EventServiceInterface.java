@@ -15,7 +15,7 @@ public interface EventServiceInterface {
 
     Optional<Event> createUpdateLevel(@NotNull EventLevel level, String description, String log, String origin);
 
-    Page<Event> findAllParams(EventLevel level, String description, String log,
+    Page<EventDTO> findAllParams(EventLevel level, String description, String log,
                                  String origin, String eventDate, Integer quantity, Pageable pageable);
 
     List<Event> findAll(Example<Event> events, Pageable pageable);

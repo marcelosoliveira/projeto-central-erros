@@ -1,14 +1,23 @@
 package com.projeto.centralerros.event.controller;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.event.repository.EventRepository;
 import com.projeto.centralerros.event.service.impl.EventService;
 import com.projeto.centralerros.enums.EventLevel;
 import lombok.AllArgsConstructor;
+import org.codehaus.jackson.map.util.JSONPObject;
+import org.codehaus.jackson.map.util.JSONWrappedObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.print.attribute.standard.Media;
+import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,9 +34,14 @@ public class EventController {
         return this.eventRepository.findAll(pageable);
     }
 
-    @GetMapping("errors/{id}")
-    public Optional<String> findById(@PathVariable(value = "id") Long id) {
-        return this.eventRepository.findByIdLog(id);
+    @GetMapping(value = "errors/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String findById(@PathVariable(value = "id") Long id) {
+        String log = this.eventRepository.findByIdLog(id);
+        if (log == null) {
+            return "Error: Id not exist!";
+        }
+        return "{\"id\":\"" + id + "\", \"log\":\"" + log + "\"}";
+        //return this.eventRepository.findByIdLog(id);
     }
 
     @PostMapping("/central")
@@ -40,7 +54,7 @@ public class EventController {
     }
 
     @GetMapping("/central")
-    public Page<Event> findByErrors(@RequestParam(value = "level", required = false) EventLevel level,
+    public Page<EventDTO> findByErrors(@RequestParam(value = "level", required = false) EventLevel level,
                                        @RequestParam(value = "description", required = false) String description,
                                        @RequestParam(value = "log", required = false) String log,
                                        @RequestParam(value = "origin", required = false) String origin,

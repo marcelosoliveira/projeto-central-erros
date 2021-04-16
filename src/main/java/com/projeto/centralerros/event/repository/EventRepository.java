@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    Page<Event> findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
+    Page<EventDTO> findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
             EventLevel level,
             String description,
             String log,
@@ -48,5 +48,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Pageable pageable);
 
     @Query(value = "SELECT log FROM events WHERE id = :id", nativeQuery = true)
-    Optional<String> findByIdLog(@Param("id") Long id);
+    String findByIdLog(@Param("id") Long id);
 }

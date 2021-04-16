@@ -48,10 +48,11 @@ public class Event {
     @Setter
     private String origin;
 
+    @NotNull
     @Column
     @Getter
     @Setter
-    private String eventDate = generateDate();
+    private String eventDate;
 
     @NotNull
     @Column
@@ -65,12 +66,4 @@ public class Event {
             joinColumns = @JoinColumn(name = "idEvent"),
             inverseJoinColumns = @JoinColumn(name = "idUser"))
     private List<User> users;
-
-    private String generateDate() {
-        Date dataAtual = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String dataFormatada = dateFormat.format(dataAtual);
-
-        return dataFormatada;
-    }
 }
