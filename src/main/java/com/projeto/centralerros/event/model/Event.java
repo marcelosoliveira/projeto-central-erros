@@ -2,10 +2,12 @@ package com.projeto.centralerros.event.model;
 
 import com.projeto.centralerros.enums.EventLevel;
 import com.projeto.centralerros.user.model.User;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.text.DateFormat;
@@ -14,8 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@EntityListeners(EntityListeners.class)
 @Table(name = "events")
+@EntityListeners(EntityListeners.class)
 public class Event {
 
     @Id
@@ -31,18 +33,21 @@ public class Event {
     private EventLevel level;
 
     @NotNull
+    @NotBlank
     @Column
     @Getter
     @Setter
     private String description;
 
     @NotNull
+    @NotBlank
     @Column
     @Getter
     @Setter
     private String log;
 
     @NotNull
+    @NotBlank
     @Column
     @Getter
     @Setter
@@ -52,7 +57,7 @@ public class Event {
     @Column
     @Getter
     @Setter
-    private String eventDate;
+    private String eventDate = generateDate();
 
     @NotNull
     @Column
@@ -66,4 +71,12 @@ public class Event {
             joinColumns = @JoinColumn(name = "idEvent"),
             inverseJoinColumns = @JoinColumn(name = "idUser"))
     private List<User> users;
+
+    public String generateDate() {
+        Date dataAtual = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String dataFormatada = dateFormat.format(dataAtual);
+
+        return dataFormatada;
+    }
 }

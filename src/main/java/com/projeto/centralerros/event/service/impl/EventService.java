@@ -28,13 +28,14 @@ public class EventService implements EventServiceInterface {
         event.setLog(log);
         event.setOrigin(origin);
 
-        Optional<Event> eventFound = this.eventRepository.findByLevelAndLogAndDescription(
-                level, log, description);
-
+        Optional<Event> eventFound = this.eventRepository.findByLevelAndLogAndDescriptionAndOrigin(
+                level, log, description, origin);
+        System.out.println(eventFound.isPresent());
+        String levelString = String.valueOf(level);
         if (eventFound.isPresent()) {
             eventFound.stream().forEach(event1 -> {
-                this.eventRepository.updateByQuantity(
-                    log, event1.getQuantity() + 1);
+                this.eventRepository.updateByQuantity(levelString, log, description, origin,
+                        event.generateDate(), event1.getQuantity() + 1);
             });
 
             return eventFound;
@@ -51,8 +52,9 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Page<EventDTO> findAllParams(EventLevel level, String description, String log,
-                                        String origin, String eventDate, Integer quantity, Pageable pageable){
+    public Page<Event> findAllParams(EventLevel level, String description, String log,
+                       String origin, String eventDate, Integer quantity, Pageable pageable){
+
         return this.eventRepository.findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
                 level, description, log, origin, eventDate, quantity, pageable);
     }
