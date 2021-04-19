@@ -1,17 +1,19 @@
 package com.projeto.centralerros.event.service.impl;
 
-import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.event.repository.EventRepository;
 import com.projeto.centralerros.event.service.interfaces.EventServiceInterface;
 import com.projeto.centralerros.enums.EventLevel;
+import com.projeto.centralerros.secutiry.LoginSecurityUser;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -19,31 +21,28 @@ public class EventService implements EventServiceInterface {
 
     private EventRepository eventRepository;
 
+    private LoginSecurityUser loginSecurityUser;
+
     @Override
-    public Optional<Event> createUpdateLevel(EventLevel level, String description, String log, String origin) {
-        Event event = new Event();
-        event.setQuantity(1);
-        event.setLevel(level);
-        event.setDescription(description);
-        event.setLog(log);
-        event.setOrigin(origin);
-
+    public Event createUpdateLevel(Event event) {
         Optional<Event> eventFound = this.eventRepository.findByLevelAndLogAndDescriptionAndOrigin(
-                level, log, description, origin);
-        System.out.println(eventFound.isPresent());
-        String levelString = String.valueOf(level);
+                event.getLevel(), event.getLog(), event.getDescription(), event.getOrigin());
+
+        //String levelString = String.valueOf(event.getLevel());
+
         if (eventFound.isPresent()) {
-            eventFound.stream().forEach(event1 -> {
-                this.eventRepository.updateByQuantity(levelString, log, description, origin,
-                        event.generateDate(), event1.getQuantity() + 1);
-            });
+           /*this.eventRepository.updateByQuantity(levelString, eventFound.get().getLog(),
+                    eventFound.get().getDescription(), eventFound.get().getOrigin(),
+                        LocalDateTime.now(), eventFound.get().getQuantity() + 1);*/
+            eventFound.get().setQuantity(eventFound.get().getQuantity() + 1);
+            eventFound.get().setEventDate(LocalDateTime.now());
+            eventFound.get().getUsers().add(this.loginSecurityUser.getLoginUser());
+            return this.eventRepository.save(eventFound.get());
+        };
 
-            return eventFound;
-        }
-
-        this.eventRepository.save(event);
-
-        return eventFound;
+        event.setQuantity(1);
+        event.getUsers().add(this.loginSecurityUser.getLoginUser());
+        return this.eventRepository.save(event);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class EventService implements EventServiceInterface {
 
     @Override
     public Page<Event> findAllParams(EventLevel level, String description, String log,
-                       String origin, String eventDate, Integer quantity, Pageable pageable){
+                       String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable) {
 
         return this.eventRepository.findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
                 level, description, log, origin, eventDate, quantity, pageable);

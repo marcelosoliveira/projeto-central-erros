@@ -1,5 +1,6 @@
 package com.projeto.centralerros.user.service.impl;
 
+import com.projeto.centralerros.user.model.User;
 import com.projeto.centralerros.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,10 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        return this.userRepository.findByUserName(userName);
-
+        User user = userRepository.findByUserName(userName);
+        if (user == null) {
+            throw new UsernameNotFoundException(userName);
+        }
+        return user;
     }
 }

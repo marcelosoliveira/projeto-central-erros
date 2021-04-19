@@ -1,22 +1,20 @@
 package com.projeto.centralerros.event.service.interfaces;
 
-import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.enums.EventLevel;
+import com.projeto.centralerros.exceptions.ResponseException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface EventServiceInterface {
 
-    Optional<Event> createUpdateLevel(@NotNull EventLevel level, String description, String log, String origin);
+    Event createUpdateLevel(Event event) throws ResponseException;
 
     Page<Event> findAllParams(EventLevel level, String description, String log,
-                                 String origin, String eventDate, Integer quantity, Pageable pageable);
+                              String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable);
 
     List<Event> findAll(Example<Event> events, Pageable pageable);
 

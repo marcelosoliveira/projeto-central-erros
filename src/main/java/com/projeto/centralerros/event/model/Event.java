@@ -2,9 +2,7 @@ package com.projeto.centralerros.event.model;
 
 import com.projeto.centralerros.enums.EventLevel;
 import com.projeto.centralerros.user.model.User;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,12 +10,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "events")
+@EqualsAndHashCode(of = "id")
 @EntityListeners(EntityListeners.class)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Event {
 
     @Id
@@ -47,7 +50,7 @@ public class Event {
     private String log;
 
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Origin não pode ser nulo ou vazio")
     @Column
     @Getter
     @Setter
@@ -57,7 +60,7 @@ public class Event {
     @Column
     @Getter
     @Setter
-    private String eventDate = generateDate();
+    private LocalDateTime eventDate = LocalDateTime.now();
 
     @NotNull
     @Column
@@ -70,13 +73,12 @@ public class Event {
     @JoinTable(name = "Users_Events",
             joinColumns = @JoinColumn(name = "idEvent"),
             inverseJoinColumns = @JoinColumn(name = "idUser"))
-    private List<User> users;
+    private Set<User> users = new HashSet<>();
 
-    public String generateDate() {
-        Date dataAtual = new Date();
+    public LocalDateTime generateDate() {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String dataFormatada = dateFormat.format(dataAtual);
+        String dataFormatada = dateFormat.format(LocalDateTime.now());
 
-        return dataFormatada;
+        return LocalDateTime.parse(dataFormatada);
     }
 }

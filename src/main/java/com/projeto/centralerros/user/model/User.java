@@ -1,8 +1,7 @@
 package com.projeto.centralerros.user.model;
 
 import com.projeto.centralerros.event.model.Event;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,11 +11,15 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
+//@Data
 @Entity
 @EntityListeners(EntityListeners.class)
+@EqualsAndHashCode(of = "id")
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -53,7 +56,7 @@ public class User implements UserDetails {
     @JoinTable(name = "Users_Events",
             joinColumns = @JoinColumn(name = "idUser"),
             inverseJoinColumns = @JoinColumn(name = "idEvent"))
-    private List<Event> events;
+    private Set<Event> events;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
