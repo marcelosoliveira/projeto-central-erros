@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.text.DateFormat;
@@ -28,29 +29,32 @@ public class Event {
     @Getter
     private Long id;
 
-    @NotNull
+    @NotNull(message = "O campo level não pode ser nulo!")
     @Column
     @Enumerated(EnumType.STRING)
     @Getter
     @Setter
     private EventLevel level;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "O campo description não pode ser nulo!")
+    @NotBlank(message = "O campo description não pode estar em branco!")
+    @NotEmpty(message = "Campo description não pode ser vazio")
     @Column
     @Getter
     @Setter
     private String description;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "O campo log não pode ser nulo!")
+    @NotBlank(message = "O campo log não pode estar em branco!")
+    @NotEmpty(message = "Campo log não pode ser vazio")
     @Column
     @Getter
     @Setter
     private String log;
 
-    @NotNull
-    @NotBlank(message = "Origin não pode ser nulo ou vazio")
+    @NotNull(message = "O campo origin não pode ser nulo!")
+    @NotEmpty(message = "Campo origin não pode ser vazio")
+    @NotBlank(message = "O campo origin não pode estar em branco!")
     @Column
     @Getter
     @Setter
@@ -67,7 +71,7 @@ public class Event {
     @Positive
     @Getter
     @Setter
-    private Integer quantity;
+    private Integer quantity = 1;
 
     @ManyToMany
     @JoinTable(name = "Users_Events",

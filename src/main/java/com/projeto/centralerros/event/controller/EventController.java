@@ -2,14 +2,12 @@ package com.projeto.centralerros.event.controller;
 
 import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.dto.EventLogDTO;
+import com.projeto.centralerros.enums.EventLevel;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.event.repository.EventRepository;
 import com.projeto.centralerros.event.service.impl.EventService;
-import com.projeto.centralerros.enums.EventLevel;
-import com.projeto.centralerros.exceptions.ResponseException;
+import com.projeto.centralerros.exceptions.ResponseNotFoundException;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Entity;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping
@@ -40,32 +37,16 @@ public class EventController {
     }
 
     @GetMapping(value = "errors/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object findById(@PathVariable(value = "id") Long id)
-            throws ResponseException {
-        try {
-            Optional<EventLogDTO> log = this.eventRepository.findByIdLog(id).map(this::toEventLogDTO);
-            if (log.isEmpty()) {
-                throw new ResponseException("Evento não encontrado!");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(log);
-        } catch (ResponseException r) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"message\":\"" + r.getMessage() + "\" }");
-        }
+    public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
+        verifyEventId(id);
+        Optional<EventLogDTO> eventLogDTO = this.eventRepository.findByIdLog(id).map(this::toEventLogDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(eventLogDTO);
     }
 
     @PostMapping("/central")
-    public Object createErrors(@RequestBody Event event) throws Exception {
-        try {
-            Optional<Event> eventDto = Optional.ofNullable(this.eventService.createUpdateLevel(event));
-            if (eventDto.get().getOrigin().isEmpty()) {
-                throw new Exception("Origin não estar vazio");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(eventDto.map(this::toEventDTO));
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
-                    .body("{\"message\":\"" + e.getMessage()+ "\" }");
-        }
+    public ResponseEntity<?> createErrors(@Valid @RequestBody Event event) {
+        Optional<Event> eventDto = Optional.ofNullable(this.eventService.createUpdateLevel(event));
+        return ResponseEntity.status(HttpStatus.OK).body(eventDto.map(this::toEventDTO));
     }
 
     @GetMapping("/central")
@@ -87,6 +68,12 @@ public class EventController {
 
     private EventLogDTO toEventLogDTO(Event event) {
         return this.modelMapper.map(event, EventLogDTO.class);
+    }
+
+    private void verifyEventId(Long id) {
+        if (this.eventRepository.findByIdLog(id).isEmpty()) {
+            throw new ResponseNotFoundException("Evento não encontrado id: " + id);
+        }
     }
 
 }

@@ -58,4 +58,15 @@ public class EventService implements EventServiceInterface {
                 level, description, log, origin, eventDate, quantity, pageable);
     }
 
+    @Override
+    public Boolean isNotValid(Event event) {
+        EventLevel[] level = { EventLevel.ERROR, EventLevel.INFO, EventLevel.WARNING };
+        if(event.getOrigin().isEmpty() || event.getDescription().isEmpty() ||
+                event.getLog().isEmpty() || !event.getLevel().equals(EventLevel.ERROR)
+        || !event.getLevel().equals(EventLevel.INFO) || !event.getLevel().equals(EventLevel.WARNING)){
+            return true;
+        }
+        return false;
+    }
+
 }

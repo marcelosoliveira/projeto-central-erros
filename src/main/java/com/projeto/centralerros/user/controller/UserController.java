@@ -3,7 +3,7 @@ package com.projeto.centralerros.user.controller;
 import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.dto.UserDTO;
 import com.projeto.centralerros.event.model.Event;
-import com.projeto.centralerros.exceptions.ResponseException;
+import com.projeto.centralerros.exceptions.ResponseNotFoundException;
 import com.projeto.centralerros.user.model.User;
 import com.projeto.centralerros.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -32,17 +32,10 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public Object userList(@PathVariable("id") Long id) throws ResponseException {
-        try {
-            Optional<UserDTO> user = this.userRepository.findById(id).map(this::toUserDTO);
-            if (user.isEmpty()) {
-                throw new ResponseException("Usuário não cadastrado!");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        } catch (ResponseException r) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"message\":\"" + r.getMessage() + "\" }");
-        }
+    public ResponseEntity<?> userList(@PathVariable("id") Long id) {
+        verifyUserId(id);
+        Optional<UserDTO> user = this.userRepository.findById(id).map(this::toUserDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PostMapping("/users")
@@ -57,6 +50,12 @@ public class UserController {
 
     private EventDTO toEventDTO(Event event) {
         return this.modelMapper.map(event, EventDTO.class);
+    }
+
+    private void verifyUserId(Long id) {
+        if (this.userRepository.findById(id).isEmpty()) {
+            throw new ResponseNotFoundException("Usuário não cadastrado id: " + id);
+        }
     }
 
 }
