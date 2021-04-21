@@ -2,25 +2,21 @@ package com.projeto.centralerros.user.model;
 
 import com.projeto.centralerros.event.model.Event;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
+import org.codehaus.jackson.annotate.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
-//@Data
 @Entity
 @EntityListeners(EntityListeners.class)
 @EqualsAndHashCode(of = "id")
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,12 +24,16 @@ public class User implements UserDetails {
     private Long id;
 
     @NotNull
+    @NotBlank
+    @NotEmpty
     @Column
     @Getter
     @Setter
     private String name;
 
     @NotNull
+    @NotBlank
+    @NotEmpty
     @Column
     @Getter
     @Setter
@@ -41,16 +41,28 @@ public class User implements UserDetails {
     private String email;
 
     @NotNull
-    @Column
+    @NotBlank
+    @NotEmpty
+    @Column(unique = true)
     @Getter
     @Setter
     private String userName;
 
     @NotNull
+    @NotBlank
+    @NotEmpty
+    @JsonIgnore
     @Column
     @Getter
     @Setter
     private String password;
+
+    @NotNull
+    @Column
+    @Getter
+    @Setter
+    @JsonIgnore
+    private boolean isAdmin = false;
 
     @ManyToMany
     @JoinTable(name = "Users_Events",
@@ -58,38 +70,4 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "idEvent"))
     private Set<Event> events;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority(("ADMIN")));
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.userName;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

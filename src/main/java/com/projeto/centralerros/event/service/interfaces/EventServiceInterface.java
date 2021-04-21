@@ -3,11 +3,10 @@ package com.projeto.centralerros.event.service.interfaces;
 import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.enums.EventLevel;
 import com.projeto.centralerros.exceptions.ResponseNotFoundException;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 public interface EventServiceInterface {
 
@@ -16,10 +15,8 @@ public interface EventServiceInterface {
     Page<Event> findAllParams(EventLevel level, String description, String log,
                               String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable);
 
-    List<Event> findAll(Example<Event> events, Pageable pageable);
+    Page<Event> findAll(Pageable pageable);
 
-    Boolean isNotValid(Event event);
-
-    //List<Event> getErrors(Example<Event> eventExample, Pageable pageable);
+    Optional<Event> findByIdLog(Long id);
 
 }

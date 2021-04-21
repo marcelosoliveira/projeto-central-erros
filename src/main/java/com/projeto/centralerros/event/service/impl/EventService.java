@@ -6,12 +6,10 @@ import com.projeto.centralerros.event.service.interfaces.EventServiceInterface;
 import com.projeto.centralerros.enums.EventLevel;
 import com.projeto.centralerros.secutiry.LoginSecurityUser;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -25,15 +23,13 @@ public class EventService implements EventServiceInterface {
 
     @Override
     public Event createUpdateLevel(Event event) {
-        Optional<Event> eventFound = this.eventRepository.findByLevelAndLogAndDescriptionAndOrigin(
-                event.getLevel(), event.getLog(), event.getDescription(), event.getOrigin());
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        String level = event.getLevel().toString();
 
-        //String levelString = String.valueOf(event.getLevel());
+        Optional<Event> eventFound = this.eventRepository.findTest(
+                level, event.getLog(), event.getDescription(), event.getOrigin(), idUser);
 
-        if (eventFound.isPresent()) {
-           /*this.eventRepository.updateByQuantity(levelString, eventFound.get().getLog(),
-                    eventFound.get().getDescription(), eventFound.get().getOrigin(),
-                        LocalDateTime.now(), eventFound.get().getQuantity() + 1);*/
+      if (eventFound.isPresent()) {
             eventFound.get().setQuantity(eventFound.get().getQuantity() + 1);
             eventFound.get().setEventDate(LocalDateTime.now());
             eventFound.get().getUsers().add(this.loginSecurityUser.getLoginUser());
@@ -46,11 +42,6 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public List<Event> findAll(Example<Event> events, Pageable pageable) {
-        return this.eventRepository.findAll(events, pageable).getContent();
-    }
-
-    @Override
     public Page<Event> findAllParams(EventLevel level, String description, String log,
                        String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable) {
 
@@ -59,14 +50,15 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Boolean isNotValid(Event event) {
-        EventLevel[] level = { EventLevel.ERROR, EventLevel.INFO, EventLevel.WARNING };
-        if(event.getOrigin().isEmpty() || event.getDescription().isEmpty() ||
-                event.getLog().isEmpty() || !event.getLevel().equals(EventLevel.ERROR)
-        || !event.getLevel().equals(EventLevel.INFO) || !event.getLevel().equals(EventLevel.WARNING)){
-            return true;
-        }
-        return false;
+    public Page<Event> findAll(Pageable pageable) {
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        return this.eventRepository.findAll(idUser, pageable);
+    }
+
+    @Override
+    public Optional<Event> findByIdLog(Long id) {
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        return this.eventRepository.findByIdLog(id, idUser);
     }
 
 }

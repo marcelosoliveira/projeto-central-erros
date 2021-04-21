@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
+@EnableJpaRepositories
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     Page<Event> findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
@@ -24,30 +26,25 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Integer quantity,
             Pageable pageable);
 
-    Optional<Event> findByLevelAndLogAndDescriptionAndOrigin(
-            EventLevel level,
-            String log,
-            String description,
-            String origin);
-
-    Event findByLog(String log);
-
-    /*@Query(value = "UPDATE events SET quantity = :quantity, event_date = :eventDate" +
-            " WHERE level = :level AND log = :log AND description = :description" +
-            " AND origin = :origin", nativeQuery = true)
-    Optional<Event> updateByQuantity(@Param("level") String level,
-                                     @Param("log") String log,
-                                     @Param("description") String description,
-                                     @Param("origin") String origin,
-                                     @Param("eventDate") LocalDateTime eventDate,
-                                     @Param("quantity") Integer quantity);*/
-
     @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event" +
-            " INNER JOIN users u ON u.id = ue.id_user WHERE e.id = :id", nativeQuery = true)
-    Optional<Event> findByIdLog(@Param("id") Long id);
+            " INNER JOIN users u ON u.id = ue.id_user WHERE e.id = :id AND u.id = :idUser", nativeQuery = true)
+    Optional<Event> findByIdLog(@Param("id") Long id, @Param("idUser") Long idUser);
 
     @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event " +
-            "INNER JOIN users u ON ue.id_user = u.id", nativeQuery = true)
-    Page<Event> findAllTest(Pageable pageable);
+            "INNER JOIN users u ON ue.id_user = u.id WHERE u.id = :idUser", nativeQuery = true)
+    Page<Event> findAll(@Param("idUser") Long idUser, Pageable pageable);
+
+     @Query(value = "SELECT e.id, e.event_date, e.quantity, e.level, " +
+             "e.log, e.description, e.origin FROM events e " +
+             "INNER JOIN users_events ue ON e.id = ue.id_event " +
+             "INNER JOIN users u ON u.id = ue.id_user " +
+             "WHERE e.level = :level AND e.log = :log AND e.description = :description " +
+             "AND e.origin = :origin AND u.id= :idUser", nativeQuery = true)
+     Optional<Event> findTest(
+            @Param("level") String level,
+            @Param("log") String log,
+            @Param("description") String description,
+            @Param("origin") String origin,
+            @Param("idUser") Long idUser);
 
 }
