@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
-@RequestMapping
+@RequestMapping("v1")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 public class EventController {
@@ -32,27 +32,27 @@ public class EventController {
 
     private ModelMapper modelMapper;
 
-    @GetMapping("/errors")
+    @GetMapping(path = "/events/all")
     public ResponseEntity<Page<EventDTO>> findAll(Pageable pageable) {
         Page<EventDTO> eventDTOPage = this.eventService.findAll(pageable).map(this::toEventDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventDTOPage);
     }
 
-    @GetMapping(value = "errors/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/events/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
         verifyEventId(id);
         Optional<EventLogDTO> eventLogDTO = this.eventService.findByIdLog(id).map(this::toEventLogDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventLogDTO);
     }
 
-    @PostMapping("/central")
-    public ResponseEntity<?> createErrors(@Valid @RequestBody Event event) {
-        Optional<Event> eventDto = Optional.ofNullable(this.eventService.createUpdateLevel(event));
+    @PostMapping(path = "/events")
+    public ResponseEntity<?> createEvents(@Valid @RequestBody Event event) {
+        Optional<Event> eventDto = Optional.ofNullable(this.eventService.createUpdateEvent(event));
         return ResponseEntity.status(HttpStatus.OK).body(eventDto.map(this::toEventDTO));
     }
 
-    @GetMapping("/central")
-    public ResponseEntity<Page<EventDTO>> findByErrors(
+    @GetMapping(path = "/events")
+    public ResponseEntity<Page<EventDTO>> findByEventParams(
                                        @RequestParam(value = "level", required = false) EventLevel level,
                                        @RequestParam(value = "description", required = false) String description,
                                        @RequestParam(value = "log", required = false) String log,
@@ -61,7 +61,7 @@ public class EventController {
                                        @RequestParam(value = "quantity", required = false) Integer quantity,
                                        Pageable pageable) {
 
-        Page<EventDTO> eventDto = this.eventService.findAllParams(level, description, log, origin,
+        Page<EventDTO> eventDto = this.eventService.findByParams(level, description, log, origin,
                 eventDate, quantity, pageable).map(this::toEventDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventDto);
     }

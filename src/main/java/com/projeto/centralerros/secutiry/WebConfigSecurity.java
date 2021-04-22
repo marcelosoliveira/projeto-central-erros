@@ -3,7 +3,6 @@ package com.projeto.centralerros.secutiry;
 import com.projeto.centralerros.user.service.impl.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -33,7 +32,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers(HttpMethod.POST, "/users");
+                .antMatchers("/v1/users");
     }
 
     @Bean
@@ -45,11 +44,8 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/errors",
-                        "errors/**",
-                        "central",
-                        "users/**",
-                        "users").authenticated()
+                .antMatchers("/*/events/**", "/*/users/**").hasRole("USER")
+                .antMatchers("/*/admin/**").hasRole("ADMIN")
                 .and()
                 .httpBasic()
                 .and()

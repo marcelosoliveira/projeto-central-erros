@@ -22,11 +22,11 @@ public class EventService implements EventServiceInterface {
     private LoginSecurityUser loginSecurityUser;
 
     @Override
-    public Event createUpdateLevel(Event event) {
+    public Event createUpdateEvent(Event event) {
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
         String level = event.getLevel().toString();
 
-        Optional<Event> eventFound = this.eventRepository.findTest(
+        Optional<Event> eventFound = this.eventRepository.findEventExist(
                 level, event.getLog(), event.getDescription(), event.getOrigin(), idUser);
 
       if (eventFound.isPresent()) {
@@ -34,7 +34,7 @@ public class EventService implements EventServiceInterface {
             eventFound.get().setEventDate(LocalDateTime.now());
             eventFound.get().getUsers().add(this.loginSecurityUser.getLoginUser());
             return this.eventRepository.save(eventFound.get());
-        };
+      };
 
         event.setQuantity(1);
         event.getUsers().add(this.loginSecurityUser.getLoginUser());
@@ -42,9 +42,8 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Page<Event> findAllParams(EventLevel level, String description, String log,
+    public Page<Event> findByParams(EventLevel level, String description, String log,
                        String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable) {
-
         return this.eventRepository.findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
                 level, description, log, origin, eventDate, quantity, pageable);
     }

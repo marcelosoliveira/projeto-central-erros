@@ -1,9 +1,6 @@
 package com.projeto.centralerros.handler;
 
-import com.projeto.centralerros.exceptions.ExceptionDetails;
-import com.projeto.centralerros.exceptions.ResponseNotFoundDetails;
-import com.projeto.centralerros.exceptions.ResponseNotFoundException;
-import com.projeto.centralerros.exceptions.ValidationExceptionDetails;
+import com.projeto.centralerros.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +32,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(responseDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ResponseBadRequestException.class)
+    public ResponseEntity<?> handlerResponseBadRequestException(ResponseBadRequestException responseException) {
+
+        ResponseBadRequestDetails responseDetails = ResponseBadRequestDetails.ResponseBadRequestDetailsBuilder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .title("Erro ao cadastrar o usuário")
+                .detail(responseException.getMessage())
+                .developerMessage(responseException.getClass().getName())
+                .build();
+
+        return new ResponseEntity<>(responseDetails, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override

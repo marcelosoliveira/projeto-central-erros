@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface EventServiceInterface {
 
-    Event createUpdateLevel(Event event) throws ResponseNotFoundException;
+    Event createUpdateEvent(Event event) throws ResponseNotFoundException;
 
-    Page<Event> findAllParams(EventLevel level, String description, String log,
+    Page<Event> findByParams(EventLevel level, String description, String log,
                               String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable);
 
     Page<Event> findAll(Pageable pageable);
