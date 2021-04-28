@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -57,12 +56,12 @@ public class EventController {
                                        @RequestParam(value = "description", required = false) String description,
                                        @RequestParam(value = "log", required = false) String log,
                                        @RequestParam(value = "origin", required = false) String origin,
-                                       @RequestParam(value = "eventDate", required = false) LocalDateTime eventDate,
+                                      // @RequestParam(value = "eventDate", required = false) LocalDateTime eventDate,
                                        @RequestParam(value = "quantity", required = false) Integer quantity,
                                        Pageable pageable) {
 
         Page<EventDTO> eventDto = this.eventService.findByParams(level, description, log, origin,
-                eventDate, quantity, pageable).map(this::toEventDTO);
+                /*eventDate,*/ quantity, pageable).map(this::toEventDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventDto);
     }
 

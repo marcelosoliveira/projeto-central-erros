@@ -101,7 +101,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .timestamp(new Date().getTime())
                 .status(status.value())
                 .title("Erro interno!")
-                .detail("Padrão do corpo JSON incorreto! " + ex.getMessage())
+                .detail("Erro interno! " + ex.getMessage())
                 .developerMessage(ex.getClass().getName())
                 .build();
 

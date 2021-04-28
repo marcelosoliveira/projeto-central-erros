@@ -42,10 +42,18 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Page<Event> findByParams(EventLevel level, String description, String log,
-                       String origin, LocalDateTime eventDate, Integer quantity, Pageable pageable) {
-        return this.eventRepository.findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
-                level, description, log, origin, eventDate, quantity, pageable);
+    public Page<Event> findByParams(EventLevel level, String description, String log, String origin,
+            /*LocalDateTime eventDate,*/ Integer quantity, Pageable pageable) {
+
+        String eventLevel = level == null ? "" : level.toString();
+        String eventDesc = description == null ? "" : description;
+        String eventLog = log == null ? "" : log;
+        String eventOrigin = origin == null ? "" : origin;
+        Integer eventQuantity = quantity == null ? 0 : quantity;
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
+
+        return this.eventRepository.findTest(eventLevel, eventDesc, eventLog,
+                eventOrigin /*eventDate*/, eventQuantity, idUser, pageable);
     }
 
     @Override

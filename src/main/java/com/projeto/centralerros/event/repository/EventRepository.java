@@ -1,7 +1,6 @@
 package com.projeto.centralerros.event.repository;
 
 import com.projeto.centralerros.event.model.Event;
-import com.projeto.centralerros.enums.EventLevel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,21 +9,27 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    Page<Event> findByLevelOrDescriptionOrLogOrOriginOrEventDateOrQuantity(
-            EventLevel level,
-            String description,
-            String log,
-            String origin,
-            LocalDateTime eventDate,
-            Integer quantity,
-            Pageable pageable);
+    @Query(value = "SELECT e.id, e.event_date, e.quantity, e.level, " +
+            "e.log, e.description, e.origin FROM events e " +
+            "INNER JOIN users_events ue ON e.id = ue.id_event " +
+            "INNER JOIN users u ON u.id = ue.id_user " +
+            "WHERE u.id = :idUser AND (e.level = :level OR e.log = :log " +
+            "OR e.description = :description OR e.origin = :origin " +
+            "OR e.quantity = :quantity)", nativeQuery = true)
+    Page<Event> findTest(@Param("level") String level,
+                         @Param("description") String description,
+                         @Param("log") String log,
+                         @Param("origin") String origin,
+                         //@Param("eventDate") LocalDateTime eventDate,
+                         @Param("quantity") Integer quantity,
+                         @Param("idUser") Long idUser,
+                         Pageable pageable);
 
     @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event" +
             " INNER JOIN users u ON u.id = ue.id_user WHERE e.id = :id AND u.id = :idUser", nativeQuery = true)
