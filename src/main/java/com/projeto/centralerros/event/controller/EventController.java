@@ -40,7 +40,7 @@ public class EventController {
 
     @GetMapping(path = "/events/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
-        verifyEventId(id);
+        //verifyEventId(id);
         Optional<EventLogDTO> eventLogDTO = this.eventService.findByIdLog(id).map(this::toEventLogDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventLogDTO);
     }
@@ -74,10 +74,10 @@ public class EventController {
         return this.modelMapper.map(event, EventLogDTO.class);
     }
 
-    private void verifyEventId(Long id) {
+   /* private void verifyEventId(Long id) {
         if (this.eventService.findByIdLog(id).isEmpty()) {
             throw new ResponseNotFoundException("Evento não encontrado id: " + id);
         }
-    }
+    }*/
 
 }
