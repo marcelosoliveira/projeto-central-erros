@@ -49,7 +49,7 @@ public class UserController {
     @GetMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Optional<UserDTO>> userId(@PathVariable("id") Long id) {
-        // verifyUserId(id);
+        verifyUserId(id);
         Optional<UserDTO> user = this.userRepository.findById(id).map(this::toUserDTO);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
@@ -66,7 +66,7 @@ public class UserController {
     @PutMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> userUpdate(@RequestBody User user) {
-        // verifyUserId(user.getId());
+        verifyUserId(user.getId());
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));
     }
@@ -74,7 +74,7 @@ public class UserController {
     @DeleteMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> userDelete(@PathVariable("id") Long id) {
-        //verifyUserId(id);
+        verifyUserId(id);
         this.userRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("{\"message\": \"Usuário deletado com sucesso.\"");
@@ -84,11 +84,11 @@ public class UserController {
         return this.modelMapper.map(user, UserDTO.class);
     }
 
-    /*private void verifyUserId(Long id) {
-        if (this.userRepository.findById(id).isEmpty()) {
+    private void verifyUserId(Long id) {
+        if (!this.userRepository.findById(id).isPresent()) {
             throw new ResponseNotFoundException("Usuário não cadastrado id: " + id);
         }
-    }*/
+    }
 
     private void verifyUserName(User user) {
         Optional<User> userName = Optional.ofNullable(
