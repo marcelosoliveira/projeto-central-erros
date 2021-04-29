@@ -32,7 +32,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/v1/users", "/oauth/token");
+                .antMatchers("/v1/users");
     }
 
     @Bean
