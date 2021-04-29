@@ -6,6 +6,7 @@ import com.projeto.centralerros.exceptions.ResponseNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface EventServiceInterface {
@@ -13,7 +14,7 @@ public interface EventServiceInterface {
     Event createUpdateEvent(Event event) throws ResponseNotFoundException;
 
     Page<Event> findByParams(EventLevel level, String description, String log,
-                                   String origin, /*LocalDateTime eventDate,*/ Integer quantity, Pageable pageable);
+                             String origin, String date, Integer quantity, Pageable pageable);
 
     Page<Event> findAll(Pageable pageable);
 

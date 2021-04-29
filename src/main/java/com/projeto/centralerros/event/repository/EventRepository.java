@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -21,12 +22,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "INNER JOIN users u ON u.id = ue.id_user " +
             "WHERE u.id = :idUser AND (e.level = :level OR e.log = :log " +
             "OR e.description = :description OR e.origin = :origin " +
-            "OR e.quantity = :quantity)", nativeQuery = true)
+            "OR e.event_date IN(:eventDate) OR e.quantity = :quantity)", nativeQuery = true)
     Page<Event> findTest(@Param("level") String level,
                          @Param("description") String description,
                          @Param("log") String log,
                          @Param("origin") String origin,
-                         //@Param("eventDate") LocalDateTime eventDate,
+                         @Param("eventDate") LocalDateTime eventDate,
                          @Param("quantity") Integer quantity,
                          @Param("idUser") Long idUser,
                          Pageable pageable);

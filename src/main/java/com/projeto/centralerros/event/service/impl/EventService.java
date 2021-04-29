@@ -31,7 +31,7 @@ public class EventService implements EventServiceInterface {
 
       if (eventFound.isPresent()) {
             eventFound.get().setQuantity(eventFound.get().getQuantity() + 1);
-            eventFound.get().setEventDate(LocalDateTime.now());
+            eventFound.get().setEventDate(eventFound.get().getEventDate());
             eventFound.get().getUsers().add(this.loginSecurityUser.getLoginUser());
             return this.eventRepository.save(eventFound.get());
       };
@@ -43,17 +43,19 @@ public class EventService implements EventServiceInterface {
 
     @Override
     public Page<Event> findByParams(EventLevel level, String description, String log, String origin,
-            /*LocalDateTime eventDate,*/ Integer quantity, Pageable pageable) {
+            String date, Integer quantity, Pageable pageable) {
 
         String eventLevel = level == null ? "" : level.toString();
         String eventDesc = description == null ? "" : description;
         String eventLog = log == null ? "" : log;
         String eventOrigin = origin == null ? "" : origin;
+        LocalDateTime eventDate = date == null ? LocalDateTime.of(
+                1970,01,01,00,00,00) : LocalDateTime.parse(date);
         Integer eventQuantity = quantity == null ? 0 : quantity;
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
 
         return this.eventRepository.findTest(eventLevel, eventDesc, eventLog,
-                eventOrigin /*eventDate*/, eventQuantity, idUser, pageable);
+                eventOrigin, eventDate, eventQuantity, idUser, pageable);
     }
 
     @Override
