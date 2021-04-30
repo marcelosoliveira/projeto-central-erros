@@ -1,8 +1,6 @@
 package com.projeto.centralerros.user.controller;
 
-import com.projeto.centralerros.dto.EventDTO;
 import com.projeto.centralerros.dto.UserDTO;
-import com.projeto.centralerros.event.model.Event;
 import com.projeto.centralerros.exceptions.ResponseBadRequestException;
 import com.projeto.centralerros.exceptions.ResponseNotFoundException;
 import com.projeto.centralerros.user.model.User;
@@ -10,21 +8,16 @@ import com.projeto.centralerros.user.repository.UserRepository;
 import com.projeto.centralerros.user.service.impl.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.nio.charset.IllegalCharsetNameException;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("v1")
