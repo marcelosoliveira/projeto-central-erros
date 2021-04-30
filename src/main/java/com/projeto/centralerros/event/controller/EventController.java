@@ -23,7 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("v1")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class EventController {
 
     private EventRepository eventRepository;
