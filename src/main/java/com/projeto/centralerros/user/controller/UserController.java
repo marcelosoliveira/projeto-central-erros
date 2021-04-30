@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("v1")
 @AllArgsConstructor
-// @CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private UserRepository userRepository;
