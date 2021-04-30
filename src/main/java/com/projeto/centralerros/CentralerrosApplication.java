@@ -14,13 +14,4 @@ public class CentralerrosApplication {
 		SpringApplication.run(CentralerrosApplication.class, args);
 	}
 
-	@Configuration
-	@EnableWebMvc
-	public static class WebConfig extends WebMvcConfigurerAdapter {
-		@Override
-		public void addCorsMappings(CorsRegistry registry) {
-			registry.addMapping("/**");
-		}
-	}
-
 }
