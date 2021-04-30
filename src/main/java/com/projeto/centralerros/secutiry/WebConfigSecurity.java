@@ -45,14 +45,14 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.cors().configurationSource(request -> new CorsConfiguration()
+                .applyPermitDefaultValues())
+                .and()
+                .authorizeRequests()
                 .antMatchers("/*/events/**", "/*/users/**").hasRole("USER")
                 .antMatchers("/*/admin/**").hasRole("ADMIN")
                 .and()
                 .httpBasic()
-                .and()
-                .cors().configurationSource(request -> new CorsConfiguration()
-                .applyPermitDefaultValues())
                 .and()
                 .csrf().disable(); // Segurança da API, retirar depois.
     }
