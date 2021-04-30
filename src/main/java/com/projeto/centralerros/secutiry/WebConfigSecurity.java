@@ -58,7 +58,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
-    /*@Bean
+    @Bean
     public FilterRegistrationBean corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
@@ -70,7 +70,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
         FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
-    }*/
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
