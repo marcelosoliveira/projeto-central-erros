@@ -12,14 +12,14 @@ public class CentralerrosApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CentralerrosApplication.class, args);
+	}
 
-		@Configuration
-		@EnableWebMvc
-		public static class WebConfig extends WebMvcConfigurerAdapter {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**");
-			}
+	@Configuration
+	@EnableWebMvc
+	public static class WebConfig extends WebMvcConfigurerAdapter {
+		@Override
+		public void addCorsMappings(CorsRegistry registry) {
+			registry.addMapping("/**");
 		}
 	}
 
