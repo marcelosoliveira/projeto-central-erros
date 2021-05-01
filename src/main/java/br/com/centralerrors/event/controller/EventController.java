@@ -7,6 +7,7 @@ import br.com.centralerrors.event.model.Event;
 import br.com.centralerrors.event.repository.EventRepository;
 import br.com.centralerrors.event.service.impl.EventService;
 import br.com.centralerrors.exceptions.ResponseNotFoundException;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("v1")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(value = "*")
 public class EventController {
 
     private EventRepository eventRepository;
@@ -31,12 +32,14 @@ public class EventController {
     private ModelMapper modelMapper;
 
     @GetMapping(path = "/events/all")
+    @ApiOperation(value = "Lista todos eventos")
     public ResponseEntity<Page<EventDTO>> findAll(Pageable pageable) {
         Page<EventDTO> eventDTOPage = this.eventService.findAll(pageable).map(this::toEventDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventDTOPage);
     }
 
     @GetMapping(path = "/events/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Consulta evento pelo id exibindo o log")
     public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
         verifyEventId(id);
         Optional<EventLogDTO> eventLogDTO = this.eventService.findByIdLog(id).map(this::toEventLogDTO);
@@ -44,12 +47,14 @@ public class EventController {
     }
 
     @PostMapping(path = "/events")
+    @ApiOperation(value = "Cadastra um evento de erros")
     public ResponseEntity<?> createEvents(@Valid @RequestBody Event event) {
         Optional<Event> eventDto = Optional.ofNullable(this.eventService.createUpdateEvent(event));
         return ResponseEntity.status(HttpStatus.OK).body(eventDto.map(this::toEventDTO));
     }
 
     @GetMapping(path = "/events")
+    @ApiOperation(value = "Lista eventos de acordo com os parâmetros")
     public ResponseEntity<Page<EventDTO>> findByEventParams(
                                        @RequestParam(value = "level", required = false) EventLevel level,
                                        @RequestParam(value = "description", required = false) String description,

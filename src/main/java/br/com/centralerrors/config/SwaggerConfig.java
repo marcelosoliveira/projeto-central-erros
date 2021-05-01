@@ -29,9 +29,10 @@ public class SwaggerConfig {
                     .build()
                 .globalOperationParameters(Collections.singletonList(new ParameterBuilder()
                     .name("Authorization")
-                    .description("Bearer Token")
+                    .description("Bearer token")
                     .modelRef(new ModelRef("string"))
                     .parameterType("header")
+                    .defaultValue("Bearer ")
                     .required(true)
                     .build()))
                 .apiInfo(metaData());
@@ -41,6 +42,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Api Central Errors")
                 .description("Central Errors By Agora Vai!")
+                .version("1.0")
                 .contact(new Contact("Grupo Agora Vai",
                         "https://github.com/marcelosoliveira/projeto-central-erros",
                         "msbobsk8@gmail.com"))

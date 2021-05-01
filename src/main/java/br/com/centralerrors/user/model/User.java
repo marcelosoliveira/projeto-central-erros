@@ -23,34 +23,34 @@ public class User {
     @Getter
     private Long id;
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
+    @NotNull(message = "O campo name não pode ser nulo!")
+    @NotBlank(message = "O campo name não pode estar em branco!")
+    @NotEmpty(message = "O campo name não pode ser vazio!")
     @Column
     @Getter
     @Setter
     private String name;
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
+    @NotNull(message = "O campo email não pode ser nulo!")
+    @NotBlank(message = "O campo email não pode estar em branco!")
+    @NotEmpty(message = "O campo email não pode ser vazio!")
     @Column
     @Getter
     @Setter
     @Email
     private String email;
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
+    @NotNull(message = "O campo userName não pode ser nulo!")
+    @NotBlank(message = "O campo userName não pode estar em branco!")
+    @NotEmpty(message = "O campo userName não pode ser vazio!")
     @Column(unique = true)
     @Getter
     @Setter
     private String userName;
 
-    @NotNull
-    @NotBlank
-    @NotEmpty
+    @NotNull(message = "O campo password não pode ser nulo!")
+    @NotBlank(message = "O campo password não pode estar em branco!")
+    @NotEmpty(message = "O campo password não pode ser vazio!")
     @JsonIgnore
     @Column
     @Getter

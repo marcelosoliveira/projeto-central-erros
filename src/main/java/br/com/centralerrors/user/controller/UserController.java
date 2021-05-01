@@ -6,6 +6,7 @@ import br.com.centralerrors.exceptions.ResponseNotFoundException;
 import br.com.centralerrors.user.model.User;
 import br.com.centralerrors.user.repository.UserRepository;
 import br.com.centralerrors.user.service.impl.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("v1")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(value = "*")
 public class UserController {
 
     private UserRepository userRepository;
@@ -33,6 +34,7 @@ public class UserController {
 
     @GetMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Lista todos usuários, se usuário for ADMIN")
     public ResponseEntity<Page<UserDTO>> userList(Pageable pageable) {
         Page<UserDTO> userDto = this.userRepository.findAll(pageable).map(this::toUserDTO);
 
@@ -41,6 +43,7 @@ public class UserController {
 
     @GetMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Consulta usuário pelo id, se usuário for ADMIN")
     public ResponseEntity<Optional<UserDTO>> userId(@PathVariable("id") Long id) {
         verifyUserId(id);
         Optional<UserDTO> user = this.userRepository.findById(id).map(this::toUserDTO);
@@ -48,6 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
+    @ApiOperation(value = "Cadastra usuário")
     public ResponseEntity<Optional<UserDTO>> createUser(@Valid @RequestBody User user) {
         verifyUserName(user);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
@@ -57,6 +61,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
+    @ApiOperation(value = "Atualiza usuário logado")
     public ResponseEntity<Optional<UserDTO>> userUpdate(@Valid @RequestBody User user) {
         verifyUserId(user.getId());
         user.setAdmin(false);
@@ -67,6 +72,7 @@ public class UserController {
 
     @PostMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Cadastra usuário ADMIN e USER, se usuário for ADMIN")
     public ResponseEntity<Optional<UserDTO>> createUserAdmin(@Valid @RequestBody User user) {
         verifyUserName(user);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
@@ -77,6 +83,7 @@ public class UserController {
 
     @PutMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Atualiza qualquer usuário, se usuário for ADMIN")
     public ResponseEntity<Optional<UserDTO>> userUpdateAdmin(@Valid @RequestBody User user) {
         verifyUserId(user.getId());
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
@@ -86,6 +93,7 @@ public class UserController {
 
     @DeleteMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Deleta qualquer usuário, se usuário for ADMIN")
     public ResponseEntity<?> userDelete(@PathVariable("id") Long id) {
         verifyUserId(id);
         this.userRepository.deleteById(id);
