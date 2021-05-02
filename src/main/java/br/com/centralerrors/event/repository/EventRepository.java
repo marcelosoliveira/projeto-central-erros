@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @EnableJpaRepositories
@@ -34,7 +35,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event" +
             " INNER JOIN users u ON u.id = ue.id_user WHERE e.id = :id AND u.id = :idUser", nativeQuery = true)
-    Optional<Event> findByIdLog(@Param("id") Long id, @Param("idUser") Long idUser);
+    Optional<Event> findByIdLog(@Param("id") UUID id, @Param("idUser") Long idUser);
 
     @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event " +
             "INNER JOIN users u ON ue.id_user = u.id WHERE u.id = :idUser", nativeQuery = true)

@@ -1,6 +1,7 @@
 package br.com.centralerrors.user.model;
 
 import br.com.centralerrors.event.model.Event;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import javax.persistence.*;
@@ -21,6 +22,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
+    @Setter
+    @ApiModelProperty(hidden = true)
     private Long id;
 
     @NotNull(message = "O campo name não pode ser nulo!")
@@ -61,8 +64,8 @@ public class User {
     @Column
     @Getter
     @Setter
-    @JsonIgnore
-    private boolean isAdmin = false;
+    @ApiModelProperty(hidden = true)
+    private Boolean isAdmin = false;
 
     @ManyToMany
     @JoinTable(name = "Users_Events",

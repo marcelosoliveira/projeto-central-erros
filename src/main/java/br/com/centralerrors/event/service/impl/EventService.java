@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -66,7 +67,7 @@ public class EventService implements EventServiceInterface {
     }
 
     @Override
-    public Optional<Event> findByIdLog(Long id) {
+    public Optional<Event> findByIdLog(UUID id) {
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
         return this.eventRepository.findByIdLog(id, idUser);
     }

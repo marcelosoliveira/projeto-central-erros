@@ -25,7 +25,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("br.com.centralerrors"))
-                    .paths(regex("/v1.*"))
+                    .paths(regex("/api/v1.*"))
                     .build()
                 .globalOperationParameters(Collections.singletonList(new ParameterBuilder()
                     .name("Authorization")
@@ -40,8 +40,9 @@ public class SwaggerConfig {
 
     private ApiInfo metaData() {
         return new ApiInfoBuilder()
-                .title("Api Central Errors")
-                .description("Central Errors By Agora Vai!")
+                .title("Api Central Errors By Agora Vai!")
+                .description("Cadastra eventos de erros de aplicações e " +
+                        "contralo acesso de usuários através de usuário e senha.")
                 .version("1.0")
                 .contact(new Contact("Grupo Agora Vai",
                         "https://github.com/marcelosoliveira/projeto-central-erros",

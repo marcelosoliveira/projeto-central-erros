@@ -38,7 +38,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers(HttpMethod.POST,"/v1/users")
+                .antMatchers(HttpMethod.POST,"/api/v1/users")
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
@@ -59,8 +59,8 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter {
                 .applyPermitDefaultValues())
                 .and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/*/events/**", "/*/users/**").hasRole("USER")
-                .antMatchers("/*/admin/**").hasRole("ADMIN")
+                .antMatchers("**/events/**", "**/users/**").hasRole("USER")
+                .antMatchers("**/admin/**").hasRole("ADMIN")
                 .and()
                 .httpBasic();
     }

@@ -7,22 +7,27 @@ import br.com.centralerrors.event.model.Event;
 import br.com.centralerrors.event.repository.EventRepository;
 import br.com.centralerrors.event.service.impl.EventService;
 import br.com.centralerrors.exceptions.ResponseNotFoundException;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("v1")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
-@CrossOrigin(value = "*")
+@CrossOrigin(origins = "*")
 public class EventController {
 
     private EventRepository eventRepository;
@@ -33,14 +38,31 @@ public class EventController {
 
     @GetMapping(path = "/events/all")
     @ApiOperation(value = "Lista todos eventos")
-    public ResponseEntity<Page<EventDTO>> findAll(Pageable pageable) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Pagina a ser carregada"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Quantidade de registros"),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Ordenacao dos registros")
+    })
+    public ResponseEntity<Page<EventDTO>> findAll(@PageableDefault(
+            sort = "quantity", direction = Sort.Direction.DESC, page = 0, size = 100)
+                                                      @ApiIgnore Pageable pageable) {
         Page<EventDTO> eventDTOPage = this.eventService.findAll(pageable).map(this::toEventDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventDTOPage);
     }
 
     @GetMapping(path = "/events/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Consulta evento pelo id exibindo o log")
-    public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 404, message = "Evento não encontrado")
+    })
+    public ResponseEntity<Optional<EventLogDTO>> findById(@PathVariable(value = "id") UUID id) {
         verifyEventId(id);
         Optional<EventLogDTO> eventLogDTO = this.eventService.findByIdLog(id).map(this::toEventLogDTO);
         return ResponseEntity.status(HttpStatus.OK).body(eventLogDTO);
@@ -48,13 +70,27 @@ public class EventController {
 
     @PostMapping(path = "/events")
     @ApiOperation(value = "Cadastra um evento de erros")
-    public ResponseEntity<?> createEvents(@Valid @RequestBody Event event) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Evento criado")
+    })
+    public ResponseEntity<Optional<EventDTO>> createEvents(@Valid @RequestBody Event event) {
         Optional<Event> eventDto = Optional.ofNullable(this.eventService.createUpdateEvent(event));
-        return ResponseEntity.status(HttpStatus.OK).body(eventDto.map(this::toEventDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventDto.map(this::toEventDTO));
     }
 
     @GetMapping(path = "/events")
     @ApiOperation(value = "Lista eventos de acordo com os parâmetros")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Pagina a ser carregada"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Quantidade de registros"),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Ordenacao dos registros")
+    })
     public ResponseEntity<Page<EventDTO>> findByEventParams(
                                        @RequestParam(value = "level", required = false) EventLevel level,
                                        @RequestParam(value = "description", required = false) String description,
@@ -62,7 +98,9 @@ public class EventController {
                                        @RequestParam(value = "origin", required = false) String origin,
                                        @RequestParam(value = "eventDate", required = false) String date,
                                        @RequestParam(value = "quantity", required = false) Integer quantity,
-                                       Pageable pageable) {
+                                       @PageableDefault(
+                                               sort = "quantity", direction = Sort.Direction.DESC, page = 0, size = 100)
+                                       @ApiIgnore Pageable pageable) {
 
         Page<EventDTO> eventDto = this.eventService.findByParams(level, description, log, origin,
                 date, quantity, pageable).map(this::toEventDTO);
@@ -77,7 +115,7 @@ public class EventController {
         return this.modelMapper.map(event, EventLogDTO.class);
     }
 
-    private void verifyEventId(Long id) {
+    private void verifyEventId(UUID id) {
         if (!this.eventService.findByIdLog(id).isPresent()) {
             throw new ResponseNotFoundException("Evento não encontrado id: " + id);
         }

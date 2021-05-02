@@ -3,27 +3,31 @@ package br.com.centralerrors.user.controller;
 import br.com.centralerrors.exceptions.ResponseBadRequestException;
 import br.com.centralerrors.dto.UserDTO;
 import br.com.centralerrors.exceptions.ResponseNotFoundException;
+import br.com.centralerrors.secutiry.LoginSecurityUser;
 import br.com.centralerrors.user.model.User;
 import br.com.centralerrors.user.repository.UserRepository;
 import br.com.centralerrors.user.service.impl.UserService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.Optional;
 
 
 @RestController
-@RequestMapping("v1")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
-@CrossOrigin(value = "*")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private UserRepository userRepository;
@@ -32,10 +36,25 @@ public class UserController {
 
     private ModelMapper modelMapper;
 
+    private LoginSecurityUser loginSecurityUser;
+
     @GetMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Lista todos usuários, se usuário for ADMIN")
-    public ResponseEntity<Page<UserDTO>> userList(Pageable pageable) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Pagina a ser carregada"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Quantidade de registros"),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Ordenacao dos registros"),
+    })
+    public ResponseEntity<Page<UserDTO>> userList(@PageableDefault(
+            sort = "userName", direction = Sort.Direction.ASC, page = 0, size = 100)
+                                                      Pageable pageable) {
         Page<UserDTO> userDto = this.userRepository.findAll(pageable).map(this::toUserDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
@@ -44,27 +63,44 @@ public class UserController {
     @GetMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Consulta usuário pelo id, se usuário for ADMIN")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok"),
+            @ApiResponse(code = 404, message = "Evento não encontrado")
+    })
     public ResponseEntity<Optional<UserDTO>> userId(@PathVariable("id") Long id) {
         verifyUserId(id);
         Optional<UserDTO> user = this.userRepository.findById(id).map(this::toUserDTO);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
-    @PostMapping("/users")
+    @PostMapping(path = "/users")
     @ApiOperation(value = "Cadastra usuário")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Cadastro ok")
+    })
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "Authorization", defaultValue = "Acesso liberado"),
+    })
     public ResponseEntity<Optional<UserDTO>> createUser(@Valid @RequestBody User user) {
         verifyUserName(user);
+        user.setIsAdmin(false);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
-        Optional<UserDTO> userDto = Optional.ofNullable(
-                this.userRepository.save(user)).map(this::toUserDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        Optional<User> userDto = Optional.ofNullable(
+                this.userRepository.save(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDto.map(this::toUserDTO));
     }
 
     @PutMapping("/users")
     @ApiOperation(value = "Atualiza usuário logado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok")
+    })
     public ResponseEntity<Optional<UserDTO>> userUpdate(@Valid @RequestBody User user) {
-        verifyUserId(user.getId());
-        user.setAdmin(false);
+        verifyUserName(user);
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        verifyUserId(idUser);
+        user.setId(idUser);
+        user.setIsAdmin(false);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));
@@ -72,20 +108,33 @@ public class UserController {
 
     @PostMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Cadastra usuário ADMIN e USER, se usuário for ADMIN")
+    @ApiOperation(value = "Cadastra usuário ADMIN, se usuário for ADMIN")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Cadastro ok")
+    })
     public ResponseEntity<Optional<UserDTO>> createUserAdmin(@Valid @RequestBody User user) {
         verifyUserName(user);
+        user.setIsAdmin(true);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
-        Optional<UserDTO> userDto = Optional.ofNullable(
-                this.userRepository.save(user)).map(this::toUserDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        Optional<User> userDto = Optional.ofNullable(
+                this.userRepository.save(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDto.map(this::toUserDTO));
     }
 
-    @PutMapping("admin/users")
+    @PutMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Atualiza qualquer usuário, se usuário for ADMIN")
-    public ResponseEntity<Optional<UserDTO>> userUpdateAdmin(@Valid @RequestBody User user) {
-        verifyUserId(user.getId());
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Ok")
+    })
+    public ResponseEntity<Optional<UserDTO>> userUpdateAdmin(@Valid @RequestBody User user,
+                                                             @PathVariable("id") Long id) {
+        verifyUserId(id);
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        Optional<User> userAdmin = this.userRepository.findById(id);
+        if (userAdmin.get().getIsAdmin() && idUser != id)
+            throw new ResponseBadRequestException("Atualização negada! Usuário ADMIN");
+        user.setId(id);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));
@@ -94,8 +143,14 @@ public class UserController {
     @DeleteMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Deleta qualquer usuário, se usuário for ADMIN")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Excluído com sucesso")
+    })
     public ResponseEntity<?> userDelete(@PathVariable("id") Long id) {
         verifyUserId(id);
+        Optional<User> userAdmin = this.userRepository.findById(id);
+        if (userAdmin.get().getIsAdmin())
+            throw new ResponseBadRequestException("Exclusão negada! Usuário ADMIN");
         this.userRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("{\"message\": \"Usuário deletado com sucesso.\"}");

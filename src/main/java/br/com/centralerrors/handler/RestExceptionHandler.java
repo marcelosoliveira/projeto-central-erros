@@ -64,6 +64,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(responseDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<?> handlerNullPointerException(NullPointerException nullPointerException) {
+
+        ResponseBadRequestDetails responseDetails = ResponseBadRequestDetails.ResponseBadRequestDetailsBuilder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .title("Erro Interno do Servidor")
+                .detail("Usuário não existe, token inválido.")
+                .developerMessage(nullPointerException.getClass().getName())
+                .build();
+
+        return new ResponseEntity<>(responseDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException methodValidException,
@@ -86,23 +101,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(validationDetails, HttpStatus.BAD_REQUEST);
     }
-
-   /* @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
-
-        ExceptionDetails exceptionDetails = ExceptionDetails.ExceptionDetailsBuilder
-                .newBuilder()
-                .timestamp(new Date().getTime())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .title("Resposta não encontrada")
-                .detail(ex.getMessage())
-                .developerMessage(ex.getClass().getName())
-                .build();
-
-        return new ResponseEntity<>(exceptionDetails, HttpStatus.BAD_REQUEST);
-    } */
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex,

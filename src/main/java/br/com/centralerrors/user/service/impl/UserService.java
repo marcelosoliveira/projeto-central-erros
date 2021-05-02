@@ -34,7 +34,7 @@ public class UserService implements UserDetailsService, UserServiceInterface {
                 "ROLE_USER");
 
         return new org.springframework.security.core.userdetails.User(
-                user.getUserName(), user.getPassword(), user.isAdmin() ? authorityListAdmin
+                user.getUserName(), user.getPassword(), user.getIsAdmin() ? authorityListAdmin
                 : authorityListUser);
     }
 

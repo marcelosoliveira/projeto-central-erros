@@ -2,7 +2,10 @@ package br.com.centralerrors.event.model;
 
 import br.com.centralerrors.enums.EventLevel;
 import br.com.centralerrors.user.model.User;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +15,7 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -23,9 +27,11 @@ import java.util.Set;
 public class Event {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUIDGenerator")
+    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
     @Getter
-    private Long id;
+    @ApiModelProperty(hidden = true)
+    private UUID id;
 
     @NotNull(message = "O campo level não pode ser nulo!")
     @Column
@@ -62,6 +68,7 @@ public class Event {
     @Column
     @Getter
     @Setter
+    @ApiModelProperty(hidden = true)
     private LocalDate eventDate = LocalDate.now();
 
     @NotNull
@@ -69,8 +76,10 @@ public class Event {
     @Positive
     @Getter
     @Setter
+    @ApiModelProperty(hidden = true)
     private Integer quantity = 1;
 
+    @ApiModelProperty(hidden = true)
     @ManyToMany
     @JoinTable(name = "Users_Events",
             joinColumns = @JoinColumn(name = "idEvent"),

@@ -1,5 +1,6 @@
 package br.com.centralerrors.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,6 @@ public class UserDTO {
     private String name;
     private String email;
     private String username;
-    private boolean isAdmin;
+    private Boolean isAdmin;
 
 }
