@@ -42,7 +42,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Api Central Errors By Agora Vai!")
                 .description("Cadastra eventos de erros de aplicações e " +
-                        "contralo acesso de usuários através de usuário e senha.")
+                        "controla acesso de usuários através de usuário e senha.")
                 .version("1.0")
                 .contact(new Contact("Grupo Agora Vai",
                         "https://github.com/marcelosoliveira/projeto-central-erros",
