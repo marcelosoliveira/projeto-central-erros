@@ -56,7 +56,7 @@ public class EventService implements EventServiceInterface {
         Integer eventQuantity = quantity == null ? 0 : quantity;
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
 
-        return this.eventRepository.findTest(eventLevel, eventDesc, eventLog,
+        return this.eventRepository.findByParams(eventLevel, eventDesc, eventLog,
                 eventOrigin, eventDate, eventQuantity, idUser, pageable);
     }
 

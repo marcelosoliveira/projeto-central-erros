@@ -2,7 +2,6 @@ package br.com.centralerrors.event.model;
 
 import br.com.centralerrors.enums.EventLevel;
 import br.com.centralerrors.user.model.User;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,9 +21,18 @@ import java.util.UUID;
 @Table(name = "events")
 @EqualsAndHashCode(of = "id")
 @EntityListeners(EntityListeners.class)
-@AllArgsConstructor
-@NoArgsConstructor
 public class Event {
+
+    public Event(UUID id, EventLevel level, String description, String log, String origin) {
+        this.id = id;
+        this.level = level;
+        this.description = description;
+        this.log = log;
+        this.origin = origin;
+    }
+
+    public Event() {
+    }
 
     @Id
     @GeneratedValue(generator = "UUIDGenerator")

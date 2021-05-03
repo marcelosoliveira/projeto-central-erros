@@ -24,14 +24,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "WHERE u.id = :idUser AND (e.level = :level OR e.log = :log " +
             "OR e.description = :description OR e.origin = :origin " +
             "OR e.event_date IN(:eventDate) OR e.quantity = :quantity)", nativeQuery = true)
-    Page<Event> findTest(@Param("level") String level,
-                         @Param("description") String description,
-                         @Param("log") String log,
-                         @Param("origin") String origin,
-                         @Param("eventDate") LocalDate eventDate,
-                         @Param("quantity") Integer quantity,
-                         @Param("idUser") Long idUser,
-                         Pageable pageable);
+    Page<Event> findByParams(@Param("level") String level,
+                             @Param("description") String description,
+                             @Param("log") String log,
+                             @Param("origin") String origin,
+                             @Param("eventDate") LocalDate eventDate,
+                             @Param("quantity") Integer quantity,
+                             @Param("idUser") Long idUser,
+                             Pageable pageable);
 
     @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event" +
             " INNER JOIN users u ON u.id = ue.id_user WHERE e.id = :id AND u.id = :idUser", nativeQuery = true)
@@ -53,5 +53,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("description") String description,
             @Param("origin") String origin,
             @Param("idUser") Long idUser);
+
+    Event findById(UUID uuid);
 
 }

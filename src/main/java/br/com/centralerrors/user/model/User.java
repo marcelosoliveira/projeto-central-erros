@@ -15,9 +15,25 @@ import java.util.Set;
 @EntityListeners(EntityListeners.class)
 @EqualsAndHashCode(of = "id")
 @Table(name = "users")
-@AllArgsConstructor
-@NoArgsConstructor
 public class User {
+
+    public User(Long id, String name, String email, String userName, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public User(String name, String email, String userName, String password) {
+        this.name = name;
+        this.email = email;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public User() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +56,7 @@ public class User {
     @Column
     @Getter
     @Setter
-    @Email
+    @Email(message = "Formato do email inválido!")
     private String email;
 
     @NotNull(message = "O campo userName não pode ser nulo!")
