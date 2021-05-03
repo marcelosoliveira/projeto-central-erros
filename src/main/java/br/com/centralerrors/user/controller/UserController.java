@@ -54,7 +54,7 @@ public class UserController {
     })
     public ResponseEntity<Page<UserDTO>> userList(@PageableDefault(
             sort = "userName", direction = Sort.Direction.ASC, page = 0, size = 100)
-                                                      Pageable pageable) {
+                                                      @ApiIgnore Pageable pageable) {
         Page<UserDTO> userDto = this.userRepository.findAll(pageable).map(this::toUserDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
