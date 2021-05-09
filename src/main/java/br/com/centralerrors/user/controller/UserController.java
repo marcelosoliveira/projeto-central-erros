@@ -140,6 +140,7 @@ public class UserController {
         if (userAdmin.get().getIsAdmin() && idUser != id)
             throw new ResponseBadRequestException("Atualização negada! Usuário ADMIN");
         user.setId(id);
+        user.setIsAdmin(true);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));
@@ -153,8 +154,9 @@ public class UserController {
     })
     public ResponseEntity<?> userDelete(@PathVariable("id") Long id) {
         verifyUserId(id);
+        Long idUser = this.loginSecurityUser.getLoginUser().getId();
         Optional<User> userAdmin = this.userRepository.findById(id);
-        if (userAdmin.get().getIsAdmin())
+        if (userAdmin.get().getIsAdmin() && idUser != id)
             throw new ResponseBadRequestException("Exclusão negada! Usuário ADMIN");
         this.userRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK)
