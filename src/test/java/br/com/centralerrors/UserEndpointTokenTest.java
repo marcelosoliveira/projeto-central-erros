@@ -64,24 +64,32 @@ public class UserEndpointTokenTest {
 
     @Before
     public void configUserHeader() {
-        String str = "{ \"username\": \"teste\", \"password\": \"teste\" }";
+        String str = "{  \"grant_type\": \"password\", \"username\": \"azul\", \"password\": \"123456789\" }";
         HttpHeaders headers = restTemplate.postForEntity(
                 "/oauth/token", str, String.class).getHeaders();
+        System.out.println(headers);
         this.userHeader = new HttpEntity<>(headers);
     }
 
     @Before
     public void configAdminHeader() {
-        String str = "{ \"username\": \"bob\", \"password\": \"123456789\" }";
+        String str = "{ \"username\": \"contaazul\", \"password\": \"123456789\" }";
         HttpHeaders headers = restTemplate.postForEntity(
                 "/oauth/token", str, String.class).getHeaders();
         this.adminHeader = new HttpEntity<>(headers);
     }
 
+//    MvcResult result = mock.perform(MockMvcRequestBuilders.post(uri).content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+//
+//    String resposta = result.getResponse().getContentAsString();
+//
+//    URI uri = new URI("/auth");
+//    String body = "{\"email\":\"aluno@email.com\",\"senha\":\"123456\"}";
+
     @Before
     public void configWrongHeader() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "083762895");
+        headers.add("Authorization", "039c9cfa-6c91-434d-90d8-c5d9a0a03a59");
         this.wrongHeader = new HttpEntity<>(headers);
     }
 
@@ -94,30 +102,30 @@ public class UserEndpointTokenTest {
     }
 
     @Test
-    public void listUsersIsTokenIncorrectStatusCode403() {
+    public void listUsersIsTokenIncorrectStatusCode401() {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 "/api/v1/admin/users", HttpMethod.GET, wrongHeader, String.class);
-        Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(403);
+        Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(401);
     }
 
     @Test
-    public void getByIdUserTokenIncorrectStatusCode403() {
+    public void getByIdUserTokenIncorrectStatusCode401() {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 "/api/v1/admin/users/1", HttpMethod.GET, wrongHeader, String.class);
-        Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(403);
+        Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(401);
     }
 
     @Test
     public void listUsersTokenCorrectStatusCode200() {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/api/v1/admin/users/", HttpMethod.GET, adminHeader, String.class);
+                "/api/v1/admin/users", HttpMethod.GET, adminHeader, String.class);
         Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
     }
 
     @Test
     public void getByUserTokenCorrectStatusCode200() {
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/api/v1/admin/users/{id}", HttpMethod.POST, adminHeader, String.class, 1L);
+                "/api/v1/admin/users/{id}", HttpMethod.POST ,adminHeader, String.class, 1L);
         Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
     }
 
@@ -141,7 +149,7 @@ public class UserEndpointTokenTest {
         String token = adminHeader.getHeaders().get("Authorization").get(0);
         BDDMockito.doNothing().when(this.userRepository).deleteById(1L);
         mockMvc.perform(MockMvcRequestBuilders
-                .delete("/api/v1/admin/users", -1L)
+                .delete("/api/v1/admin/users/{id}", -1)
                 .header("Authorization", token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -153,7 +161,7 @@ public class UserEndpointTokenTest {
 
         BDDMockito.when(this.userRepository.save(user)).thenReturn(user);
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-                "/api/v1/users/", user, String.class);
+                "/api/v1/users", user, String.class);
         Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
     }
 
@@ -164,7 +172,7 @@ public class UserEndpointTokenTest {
 
         BDDMockito.when(this.userRepository.save(user)).thenReturn(user);
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/api/v1/admin/users/", HttpMethod.GET, adminHeader, String.class);
+                "/api/v1/admin/users", HttpMethod.GET, adminHeader, String.class);
         Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
     }
 }

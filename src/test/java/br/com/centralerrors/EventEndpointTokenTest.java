@@ -134,7 +134,7 @@ public class EventEndpointTokenTest {
 
         BDDMockito.when(this.eventRepository.save(event)).thenReturn(event);
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/api/v1/admin/users/", HttpMethod.GET, userHeader, String.class);
+                "/api/v1/admin/users", HttpMethod.GET, userHeader, String.class);
         Assertions.assertThat(responseEntity.getStatusCodeValue()).isEqualTo(201);
     }
 }

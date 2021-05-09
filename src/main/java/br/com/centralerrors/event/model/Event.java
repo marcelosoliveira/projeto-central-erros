@@ -81,7 +81,7 @@ public class Event {
 
     @NotNull
     @Column
-    @Positive
+    @Positive(message = "O campo quantity não pode ter o valor negativo!")
     @Getter
     @Setter
     @ApiModelProperty(hidden = true)

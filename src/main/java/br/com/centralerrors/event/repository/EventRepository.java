@@ -41,13 +41,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "INNER JOIN users u ON ue.id_user = u.id WHERE u.id = :idUser", nativeQuery = true)
     Page<Event> findAll(@Param("idUser") Long idUser, Pageable pageable);
 
-     @Query(value = "SELECT e.id, e.event_date, e.quantity, e.level, " +
+    @Query(value = "SELECT e.id, e.event_date, e.quantity, e.level, " +
              "e.log, e.description, e.origin FROM events e " +
              "INNER JOIN users_events ue ON e.id = ue.id_event " +
              "INNER JOIN users u ON u.id = ue.id_user " +
              "WHERE e.level = :level AND e.log = :log AND e.description = :description " +
-             "AND e.origin = :origin AND u.id= :idUser", nativeQuery = true)
-     Optional<Event> findEventExist(
+             "AND e.origin = :origin AND u.id = :idUser", nativeQuery = true)
+    Optional<Event> findEventExist(
             @Param("level") String level,
             @Param("log") String log,
             @Param("description") String description,
