@@ -98,9 +98,14 @@ public class UserController {
     public ResponseEntity<Optional<UserDTO>> userUpdate(@Valid @RequestBody User user) {
         verifyUserName(user);
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        Boolean roleUser = this.loginSecurityUser.getLoginUser().getIsAdmin();
+        if (roleUser) {
+            user.setIsAdmin(true);
+        } else {
+            user.setIsAdmin(false);
+        }
         verifyUserId(idUser);
         user.setId(idUser);
-        user.setIsAdmin(false);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));
