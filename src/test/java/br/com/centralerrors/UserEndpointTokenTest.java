@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +57,8 @@ public class UserEndpointTokenTest {
     static class Config{
         @Bean
         public RestTemplateBuilder restTemplateBuilder() {
-            return new RestTemplateBuilder().basicAuthentication("admin", "admin");
+            return new RestTemplateBuilder()
+                    .basicAuthentication("admin", "admin");
         }
     }
 

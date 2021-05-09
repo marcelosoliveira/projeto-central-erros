@@ -123,7 +123,7 @@ public class UserController {
 
     @PutMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Atualiza qualquer usuário, se usuário for ADMIN")
+    @ApiOperation(value = "Atualiza qualquer usuário USER, se usuário for ADMIN")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok")
     })
@@ -142,7 +142,7 @@ public class UserController {
 
     @DeleteMapping("admin/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Deleta qualquer usuário, se usuário for ADMIN")
+    @ApiOperation(value = "Deleta qualquer usuário USER, se usuário for ADMIN")
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Excluído com sucesso")
     })

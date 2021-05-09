@@ -15,11 +15,10 @@ public class LoginSecurityUser {
 
     public User getLoginUser() {
         Object loginUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         String username;
 
         if (loginUser instanceof UserDetails) {
-            username = ((UserDetails)loginUser).getUsername();
+            username = ((UserDetails) loginUser).getUsername();
         } else {
             username = loginUser.toString();
         }
