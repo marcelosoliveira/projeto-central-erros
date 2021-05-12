@@ -136,6 +136,12 @@ public class UserController {
                                                              @PathVariable("id") Long id) {
         verifyUserId(id);
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        Boolean roleUser = this.loginSecurityUser.getLoginUser().getIsAdmin();
+        if (roleUser) {
+            user.setIsAdmin(true);
+        } else {
+            user.setIsAdmin(false);
+        }
         Optional<User> userAdmin = this.userRepository.findById(id);
         if (userAdmin.get().getIsAdmin() && idUser != id)
             throw new ResponseBadRequestException("Atualização negada! Usuário ADMIN");

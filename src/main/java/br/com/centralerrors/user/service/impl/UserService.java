@@ -22,8 +22,6 @@ public class UserService implements UserDetailsService, UserServiceInterface {
 
     private UserRepository userRepository;
 
-    private LoginSecurityUser loginSecurityUser;
-
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = Optional.ofNullable(this.userRepository.findByUserName(userName))
