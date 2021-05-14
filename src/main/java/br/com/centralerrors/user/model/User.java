@@ -84,6 +84,7 @@ public class User {
     @ApiModelProperty(hidden = true)
     private Boolean isAdmin = false;
 
+    @ApiModelProperty(hidden = true)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Event> events;
