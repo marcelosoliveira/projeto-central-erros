@@ -110,15 +110,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));
     }
 
-    @PostMapping("admin/users")
+    @PostMapping("admin/users/{isAdmin}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Cadastra usuário ADMIN, se usuário for ADMIN")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Cadastro ok")
     })
-    public ResponseEntity<Optional<UserDTO>> createUserAdmin(@Valid @RequestBody User user) {
+    public ResponseEntity<Optional<UserDTO>> createUserAdmin(@Valid @RequestBody User user,
+                                                             @PathVariable Boolean isAdmin) {
         verifyUserName(user);
-        user.setIsAdmin(true);
+        user.setIsAdmin(isAdmin);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(
                 this.userRepository.save(user));
