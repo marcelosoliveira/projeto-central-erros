@@ -96,15 +96,14 @@ public class UserController {
             @ApiResponse(code = 200, message = "Ok")
     })
     public ResponseEntity<Optional<UserDTO>> userUpdate(@Valid @RequestBody User user) {
-        verifyUserName(user);
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
+        verifyUserId(idUser);
         Boolean roleUser = this.loginSecurityUser.getLoginUser().getIsAdmin();
         if (roleUser) {
             user.setIsAdmin(true);
         } else {
             user.setIsAdmin(false);
         }
-        verifyUserId(idUser);
         user.setId(idUser);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
@@ -126,27 +125,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto.map(this::toUserDTO));
     }
 
-    @PutMapping("admin/users/{id}")
+    @PutMapping("admin/users/{id}/{isAdmin}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Atualiza qualquer usuário USER, se usuário for ADMIN")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok")
     })
     public ResponseEntity<Optional<UserDTO>> userUpdateAdmin(@Valid @RequestBody User user,
-                                                             @PathVariable("id") Long id) {
+                                                             @PathVariable("id") Long id,
+                                                             @PathVariable Boolean isAdmin) {
         verifyUserId(id);
         Long idUser = this.loginSecurityUser.getLoginUser().getId();
-        Boolean roleUser = this.loginSecurityUser.getLoginUser().getIsAdmin();
-        if (roleUser) {
-            user.setIsAdmin(true);
-        } else {
-            user.setIsAdmin(false);
-        }
         Optional<User> userAdmin = this.userRepository.findById(id);
         if (userAdmin.get().getIsAdmin() && idUser != id)
             throw new ResponseBadRequestException("Atualização negada! Usuário ADMIN");
         user.setId(id);
-        user.setIsAdmin(true);
+        user.setIsAdmin(isAdmin);
         user.setPassword(this.userService.passwordCrypto(user.getPassword()));
         Optional<User> userDto = Optional.ofNullable(this.userRepository.save(user));
         return ResponseEntity.status(HttpStatus.OK).body(userDto.map(this::toUserDTO));

@@ -34,12 +34,11 @@ public class EventService implements EventServiceInterface {
       if (eventFound.isPresent()) {
             eventFound.get().setQuantity(eventFound.get().getQuantity() + 1);
             eventFound.get().setEventDate(event.getEventDate());
-            eventFound.get().getUsers().add(this.loginSecurityUser.getLoginUser());
             return this.eventRepository.save(eventFound.get());
       };
 
         event.setQuantity(1);
-        event.getUsers().add(this.loginSecurityUser.getLoginUser());
+        event.setUser(this.loginSecurityUser.getLoginUser());
         return this.eventRepository.save(event);
     }
 

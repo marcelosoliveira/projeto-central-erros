@@ -2,6 +2,7 @@ package br.com.centralerrors.event.model;
 
 import br.com.centralerrors.enums.EventLevel;
 import br.com.centralerrors.user.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -18,9 +19,9 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "events")
-@EqualsAndHashCode(of = "id")
 @EntityListeners(EntityListeners.class)
+@EqualsAndHashCode(of = "id")
+@Table(name = "events")
 public class Event {
 
     public Event(UUID id, EventLevel level, String description, String log, String origin) {
@@ -88,10 +89,8 @@ public class Event {
     private Integer quantity = 1;
 
     @ApiModelProperty(hidden = true)
-    @ManyToMany
-    @JoinTable(name = "Users_Events",
-            joinColumns = @JoinColumn(name = "idEvent"),
-            inverseJoinColumns = @JoinColumn(name = "idUser"))
-    private Set<User> users = new HashSet<>();
+    @ManyToOne
+    @JsonIgnore
+    private User user;
 
 }

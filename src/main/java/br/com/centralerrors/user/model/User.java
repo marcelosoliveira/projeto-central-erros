@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
+@Data
 @Entity
 @EntityListeners(EntityListeners.class)
 @EqualsAndHashCode(of = "id")
@@ -62,7 +63,7 @@ public class User {
     @NotNull(message = "O campo userName não pode ser nulo!")
     @NotBlank(message = "O campo userName não pode estar em branco!")
     @NotEmpty(message = "O campo userName não pode ser vazio!")
-    @Column(unique = true)
+    @Column
     @Getter
     @Setter
     private String userName;
@@ -83,10 +84,8 @@ public class User {
     @ApiModelProperty(hidden = true)
     private Boolean isAdmin = false;
 
-    @ManyToMany
-    @JoinTable(name = "Users_Events",
-            joinColumns = @JoinColumn(name = "idUser"),
-            inverseJoinColumns = @JoinColumn(name = "idEvent"))
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Event> events;
 
 }

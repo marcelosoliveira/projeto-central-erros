@@ -17,10 +17,7 @@ import java.util.UUID;
 @EnableJpaRepositories
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query(value = "SELECT e.id, e.event_date, e.quantity, e.level, " +
-            "e.log, e.description, e.origin FROM events e " +
-            "INNER JOIN users_events ue ON e.id = ue.id_event " +
-            "INNER JOIN users u ON u.id = ue.id_user " +
+    @Query(value = "SELECT * FROM events e INNER JOIN users u ON u.id = e.user_id " +
             "WHERE u.id = :idUser AND (e.level = :level OR e.log = :log " +
             "OR e.description = :description OR e.origin = :origin " +
             "OR e.event_date IN(:eventDate) OR e.quantity = :quantity)", nativeQuery = true)
@@ -33,18 +30,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                              @Param("idUser") Long idUser,
                              Pageable pageable);
 
-    @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event" +
-            " INNER JOIN users u ON u.id = ue.id_user WHERE e.id = :id AND u.id = :idUser", nativeQuery = true)
+    @Query(value = "SELECT * FROM events e INNER JOIN users u ON u.id = e.user_id " +
+            "WHERE e.id = :id AND u.id = :idUser", nativeQuery = true)
     Optional<Event> findByIdLog(@Param("id") UUID id, @Param("idUser") Long idUser);
 
-    @Query(value = "SELECT * FROM events e INNER JOIN users_events ue ON e.id = ue.id_event " +
-            "INNER JOIN users u ON ue.id_user = u.id WHERE u.id = :idUser", nativeQuery = true)
+    @Query(value = "SELECT * FROM events e INNER JOIN users u ON e.user_id = u.id " +
+            "WHERE u.id = :idUser", nativeQuery = true)
     Page<Event> findAll(@Param("idUser") Long idUser, Pageable pageable);
 
-    @Query(value = "SELECT e.id, e.event_date, e.quantity, e.level, " +
-             "e.log, e.description, e.origin FROM events e " +
-             "INNER JOIN users_events ue ON e.id = ue.id_event " +
-             "INNER JOIN users u ON u.id = ue.id_user " +
+    @Query(value = "SELECT * FROM events e INNER JOIN users u ON u.id = e.user_id " +
              "WHERE e.level = :level AND e.log = :log AND e.description = :description " +
              "AND e.origin = :origin AND u.id = :idUser", nativeQuery = true)
     Optional<Event> findEventExist(
