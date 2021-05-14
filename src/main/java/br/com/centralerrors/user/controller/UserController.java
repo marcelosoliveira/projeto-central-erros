@@ -112,7 +112,7 @@ public class UserController {
 
     @PostMapping("admin/users/{isAdmin}")
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Cadastra usuário ADMIN, se usuário for ADMIN")
+    @ApiOperation(value = "Cadastra usuário User ou ADMIN, se usuário for ADMIN")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Cadastro ok")
     })
