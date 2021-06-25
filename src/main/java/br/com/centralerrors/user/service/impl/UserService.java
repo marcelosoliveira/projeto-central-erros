@@ -1,6 +1,5 @@
 package br.com.centralerrors.user.service.impl;
 
-import br.com.centralerrors.secutiry.LoginSecurityUser;
 import br.com.centralerrors.user.repository.UserRepository;
 import br.com.centralerrors.user.service.interfaces.UserServiceInterface;
 import br.com.centralerrors.user.model.User;
